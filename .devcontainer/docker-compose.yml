@@ -1,6 +1,6 @@
 version: '3.8'
 
-services:
+services: 
   app:
     build:
       context: .
@@ -18,7 +18,7 @@ services:
     # Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
     # user: root
 
-    # Use "forwardPorts" in **devcontainer.json** to forward an app port locally.
+    # Use "forwardPorts" in **devcontainer.json** to forward an app port locally. 
     # (Adding the "ports" property to this file will not forward from a Codespace.)
 
   db:
@@ -26,19 +26,21 @@ services:
     restart: unless-stopped
     volumes:
       - mariadb-data:/var/lib/mysql:rw
+      - ./init-sql:/docker-entrypoint-initdb.d:rw
     environment:
       MYSQL_ROOT_PASSWORD: mariadb
       MYSQL_DATABASE: mariadb
       MYSQL_USER: mariadb
       MYSQL_PASSWORD: mariadb
-    ports:
-      - "3306:3306"  # Corrected indentation
+
+    # Add "forwardPorts": ["3306"] to **devcontainer.json** to forward MariaDB locally.
+    # (Adding the "ports" property to this file will not forward from a Codespace.)
 
   adminer:
     image: adminer
     restart: always
     ports:
       - 8080:8080
-
+  
 volumes:
   mariadb-data:
