@@ -25,6 +25,9 @@ function loginUser($conn, $email, $password)
     $stmt->execute();
     $stmt->store_result();
 
+    $userId = 0; // Initialisera $userId innan du använder den
+    $hashedPassword = '';
+
     // Kontrollerar om  användare med den angivna e-postadressen finns i databasen
     if ($stmt->num_rows > 0) {
         $stmt->bind_result($userId, $hashedPassword);
@@ -88,7 +91,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
     <div class="container">
         <div class="todo-app">
-            <h2>Att göra-lista <img src="/images/clipboard-list-solid.svg" alt="ikon"></h2>
+            <h2>Att göra lista </h2>
 
             <!-- Registreringsformulär  för att skapa konto -->
             <form action="" method="post">
