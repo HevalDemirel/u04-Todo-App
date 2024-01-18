@@ -39,7 +39,6 @@ function getTasks($conn)
     return $result->fetch_all(MYSQLI_ASSOC);
 }
 
-// Handle form submissions
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['addTask'])) {
         $newTask = $_POST['newTask'];
@@ -90,7 +89,6 @@ $conn->close();
 
 <body>
 
-    <!-- Form for adding a new task -->
     <form method="post">
         <label for="newTask">New Task:</label>
         <input type="text" name="newTask" required>
@@ -99,7 +97,6 @@ $conn->close();
 
     <hr>
 
-    <!-- Form for showing all tasks and performing actions -->
     <form method="post">
         <button type="submit" name="showAllTasks">Show All Tasks</button>
     </form>
