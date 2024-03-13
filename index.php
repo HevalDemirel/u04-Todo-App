@@ -7,31 +7,28 @@ function registerUser($conn, $name, $email, $password)
 {
     $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
 
-    $stmt = $conn->prepare("INSERT INTO users (name, email, password) VALUES (?, ?, ?)");
-    $stmt->bind_param("sss", $name, $email, $hashedPassword);
+    $stmt = $conn->prepare("INSERT INTO users (name, email, password) VALUES (:name, :email, :password)");
+    $stmt->bindParam(':name', $name);
+    $stmt->bindParam(':email', $email);
+    $stmt->bindParam(':password', $hashedPassword);
     $stmt->execute();
 }
+
 function loginUser($conn, $email, $password)
 {
-    $stmt = $conn->prepare("SELECT id, password FROM users WHERE email = ?");
-    $stmt->bind_param("s", $email);
+    $stmt = $conn->prepare("SELECT id, password FROM users WHERE email = :email");
+    $stmt->bindParam(':email', $email);
     $stmt->execute();
-    $stmt->store_result();
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    $userId = 0; 
-    $hashedPassword = '';
-
-   
-    if ($stmt->num_rows > 0) {
-        $stmt->bind_result($userId, $hashedPassword);
-        $stmt->fetch();
-
+    if ($result) {
+        $hashedPassword = $result['password'];
         if (password_verify($password, $hashedPassword)) {
-            return $userId; 
+            return $result['id'];
         }
     }
 
-    return false; 
+    return false;
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
