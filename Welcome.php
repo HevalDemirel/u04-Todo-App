@@ -13,14 +13,12 @@ if (isset($_SESSION['userId'])) {
     $userId = $_SESSION['userId'];
 
     $stmt = $conn->prepare("SELECT name, email FROM users WHERE id = ?");
-    $stmt->bind_param("i", $userId); 
-    $stmt->execute(); 
-    $result = $stmt->get_result(); 
+    $stmt->execute([$userId]); 
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
    
-    if ($result->num_rows > 0) {
+    if ($user) {
       
-        $user = $result->fetch_assoc();
         $name = $user['name'];
         $email = $user['email'];
     } else {
@@ -28,12 +26,12 @@ if (isset($_SESSION['userId'])) {
         unset($_SESSION['userId']);
     }
 
-    $stmt->close();
+    $stmt->closeCursor();
 } else {
     echo "Användar-ID är inte satt i sessionen.";
 }
 
-$conn->close();
+$conn = null;
 ?>
 
 <!DOCTYPE html>

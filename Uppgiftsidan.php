@@ -4,39 +4,35 @@ include "connect.php";
 function addTask($conn, $task)
 {
     $stmt = $conn->prepare("INSERT INTO todo (attgora) VALUES (?)");
-    $stmt->bind_param("s", $task);
-    $stmt->execute();
+    $stmt->execute([$task]);
     echo "Du har nu lagt till en ny uppgift att göra!";
 }
 
 function completeTask($conn, $id)
 {
     $stmt = $conn->prepare("UPDATE todo SET klar = 1 WHERE ID = ?");
-    $stmt->bind_param("i", $id);
-    $stmt->execute();
+    $stmt->execute([$id]);
     echo "Uppgiften är nu markerad som klar!";
 }
 
 function updateTask($conn, $id, $newTask)
 {
     $stmt = $conn->prepare("UPDATE todo SET attgora = ? WHERE ID = ?");
-    $stmt->bind_param("si", $newTask, $id);
-    $stmt->execute();
+    $stmt->execute([$newTask, $id]);
     echo "Uppgiften är nu uppdaterad!";
 }
 
 function deleteTask($conn, $id)
 {
     $stmt = $conn->prepare("DELETE FROM todo WHERE ID = ?");
-    $stmt->bind_param("i", $id);
-    $stmt->execute();
+    $stmt->execute([$id]);
     echo "Uppgiften är nu borttagen!";
 }
 
 function getTasks($conn)
 {
-    $result = $conn->query("SELECT * FROM todo");
-    return $result->fetch_all(MYSQLI_ASSOC);
+    $stmt = $conn->query("SELECT * FROM todo");
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -75,33 +71,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         deleteTask($conn, $taskId);
     }
 }
-$conn->close();
+$conn = null;
 ?>
-
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Todo Tasks</title>
-</head>
-
-<body>
-
-    <form method="post">
-        <label for="newTask">New Task:</label>
-        <input type="text" name="newTask" required>
-        <button type="submit" name="addTask">Add Task</button>
-    </form>
-
-    <hr>
-
-    <form method="post">
-        <button type="submit" name="showAllTasks">Show All Tasks</button>
-    </form>
-
-</body>
-
-</html>
-
